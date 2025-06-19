@@ -219,20 +219,29 @@ class Text_Classification(NLPBaseModel):
             cfg (dict): Save configuration.
         """
         try:
+            logger.info("Saving model and tokenizer locally...")
             accelerator.wait_for_everyone()
             unwrapped_model = accelerator.unwrap_model(model)
 
-            unwrapped_model.save_pretrained(cfg["save"]["output_dir"], save_function=accelerator.save)
-            tokenizer.save_pretrained(cfg["save"]["output_dir"])
+            # Save model and tokenizer
+            output_dir = cfg["save"]["output_dir"]
+            unwrapped_model.save_pretrained(output_dir, save_function=accelerator.save)
+            tokenizer.save_pretrained(output_dir)
 
-            mlflow.pytorch.log_model(unwrapped_model, "model")
-            for root, _, files in os.walk(cfg["save"]["output_dir"]):
+            logger.info("Logging model and tokenizer as MLflow artifacts...")
+
+            # Log all files in model output directory
+            for root, _, files in os.walk(output_dir):
                 for file in files:
-                    mlflow.log_artifact(os.path.join(root, file))
+                    file_path = os.path.join(root, file)
+                    mlflow.log_artifact(file_path, artifact_path="model")
 
+            # Log the config file as well
             config_path = cfg.get("config_path", "config.yaml")
             if os.path.exists(config_path):
-                mlflow.log_artifact(config_path)
+                mlflow.log_artifact(config_path, artifact_path="config")
+
+            logger.info("Model, tokenizer, and config logged to MLflow successfully.")
         except CustomException as e:
             logger.error(f"Model saving error: {e}")
             raise
