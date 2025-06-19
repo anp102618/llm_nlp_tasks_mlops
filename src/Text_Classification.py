@@ -248,7 +248,8 @@ def execute_text_classification() -> None:
     - Trains, evaluates, and saves artifacts
     """
     try:
-        
+        os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("DAGSHUB_USERNAME")
+        os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
         logger.info("Commencing Text classification workflow...")
         cfg = load_config("./Config_Yaml/config_text_classification.yaml")
 
