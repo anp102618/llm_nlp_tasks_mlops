@@ -21,6 +21,10 @@ import mlflow
 from peft import prepare_model_for_kbit_training, get_peft_model, LoraConfig, TaskType
 from Common_Utils import setup_logger, track_performance, load_config, CustomException, upload_model_hub
 from src.base_model import NLPBaseModel
+import dagshub
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("DAGSHUB_USERNAME")
+os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
 
 
 logger = setup_logger(filename="NLP_logger_test")
@@ -342,7 +346,7 @@ def execute_machine_translation() -> None:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         current_model = f"{cfg['mlflow']['experiment_name']}_{timestamp}"
 
-        mlflow.set_tracking_uri("http://127.0.0.1:5000")
+        mlflow.set_tracking_uri("https://github.com/anp102618/llm_nlp_tasks_mlops.git")
         mlflow.set_experiment(current_model)
 
         with mlflow.start_run(run_name=cfg["mlflow"]["run_name"]):

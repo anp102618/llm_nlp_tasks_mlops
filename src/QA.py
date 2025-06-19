@@ -22,6 +22,10 @@ import evaluate
 from tqdm import tqdm
 from Common_Utils import setup_logger, track_performance, CustomException, load_config, upload_model_hub
 from src.base_model import NLPBaseModel
+import dagshub
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("DAGSHUB_USERNAME")
+os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
 
 logger = setup_logger(filename="NLP_logger_test")
 accelerator = Accelerator()
@@ -329,7 +333,7 @@ def execute_qa() -> None:
     try:
         logger.info("Commencing QA workflow..")
         cfg: Dict[str, Any] = load_config("./Config_Yaml/config_qa.yaml")
-        mlflow.set_tracking_uri("http://127.0.0.1:5000")
+        mlflow.set_tracking_uri("https://github.com/anp102618/llm_nlp_tasks_mlops.git")
         mlflow.set_experiment(cfg["mlflow"]["experiment_name"] + "_" + datetime.now().strftime("%Y%m%d_%H%M%S"))
 
         with mlflow.start_run(run_name=cfg["mlflow"]["run_name"]):
