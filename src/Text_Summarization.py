@@ -306,8 +306,8 @@ def execute_text_summarization() -> None:
 
             ts.train(model, optimizer, scheduler, train_loader, cfg)
             ts.evaluate_model(model, val_loader, tokenizer, cfg)
-            #ts.save_model(model, tokenizer, cfg)
-            upload_model_hub(model, tokenizer, cfg)
+            ts.save_model(model, tokenizer, cfg)
+            #upload_model_hub(model, tokenizer, cfg)
             logger.info("Text summarization task completed successfully.")
     
     except CustomException as e:

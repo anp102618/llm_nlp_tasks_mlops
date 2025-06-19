@@ -269,8 +269,8 @@ def execute_text_generation() -> None:
 
             tg.train(model, optimizer, scheduler, train_loader, cfg)
             tg.evaluate_model(model, val_loader, tokenizer, cfg)
-           # tg.save_model(model, tokenizer, cfg)
-            upload_model_hub(model, tokenizer, cfg)
+            tg.save_model(model, tokenizer, cfg)
+            #upload_model_hub(model, tokenizer, cfg)
 
     except CustomException as e:
         logger.error(f"Execution failed: {e}")

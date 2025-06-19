@@ -370,8 +370,8 @@ def execute_machine_translation() -> None:
 
             mt.train(model, optimizer, scheduler, train_loader, cfg)
             mt.evaluate_model(model, val_loader, tokenizer, cfg)
-            #mt.save_model(model, tokenizer, cfg)
-            upload_model_hub(model, tokenizer, cfg)
+            mt.save_model(model, tokenizer, cfg)
+            #upload_model_hub(model, tokenizer, cfg)
 
         logger.info("Machine Translation Workflow completed successfully.")
     except CustomException as e:

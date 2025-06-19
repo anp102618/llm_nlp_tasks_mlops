@@ -357,8 +357,8 @@ def execute_qa() -> None:
 
             qa.train(model, optimizer, scheduler, train_loader, cfg)
             qa.evaluate_model(model, val_loader, tokenizer, cfg, raw_val_ds, cfg["train"]["batch_size"])
-            #qa.save_model(model, tokenizer, cfg)
-            upload_model_hub(model, tokenizer, cfg)
+            qa.save_model(model, tokenizer, cfg)
+            #upload_model_hub(model, tokenizer, cfg)
             logger.info("QA task completed successfully ..")
 
     except CustomException as e:

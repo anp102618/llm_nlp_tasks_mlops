@@ -25,7 +25,7 @@ def pipeline():
         #execute_text_generation()
         #execute_text_summarization()
         #execute_implementation()
-        execute_model_upload()
+        #execute_model_upload()
 
         logger.info(f"training of NLP tasks completed succesfully..")
 

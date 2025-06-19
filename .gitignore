@@ -17,11 +17,8 @@ ENV/
 
 
 
-logs/
 __pycache__/
 
-mlartifacts/
-mlruns/
 
 
 # Streamlit cache

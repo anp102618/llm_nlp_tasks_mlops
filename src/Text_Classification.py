@@ -278,8 +278,8 @@ def execute_text_classification() -> None:
 
             tc.train(model, optimizer, scheduler, train_loader, cfg)
             tc.evaluate_model(model, val_loader, cfg)
-            #tc.save_model(model, tokenizer, cfg)
-            upload_model_hub(model, tokenizer, cfg)
+            tc.save_model(model, tokenizer, cfg)
+            #upload_model_hub(model, tokenizer, cfg)
 
             logger.info("Text classification task completed successfully.")
     except CustomException as e:
