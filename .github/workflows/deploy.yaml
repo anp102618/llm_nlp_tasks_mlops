@@ -5,55 +5,49 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-
   workflow_dispatch:
 
 env:
-
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
   HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
 jobs:
-
-  ######################################
-  # 1. Train, Track, Test , deploy the Model
-  ######################################
   build-train-test-deploy:
+    name: Train & Deploy Model
     runs-on: ubuntu-latest
-    outputs:
-      promotion_status: ${{ steps.promotion.outputs.status }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set Up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
+          pip install -r requirements.txt
           pip install huggingface_hub
 
-      - name: Hugging Face login
+      - name: Login to Hugging Face
         run: |
-          echo "$HF_TOKEN" | huggingface-cli login --token
+          huggingface-cli login --token "$HF_TOKEN"
 
-      - name: Model_tuning 
-        run: python main.py
-        
-      - name: Upload models to Hugging Face
+      - name: Train and Track Model (MLflow)
+        run: |
+          python main.py
+
+      - name: Upload Tuned Models to HuggingFace Hub
         run: |
           python src/models_upload.py
 
-      - name: Set Timestamp Tag
+      - name: Generate Docker Tag from Timestamp
         id: timestamp
-        run: echo "TAG=$(date +'%Y%m%d%H%M%S')" >> "$GITHUB_OUTPUT"
+        run: echo "tag=$(date +'%Y%m%d%H%M%S')" >> "$GITHUB_OUTPUT"
 
-
-      - name: Log in to DockerHub
+      - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
@@ -62,11 +56,12 @@ jobs:
       - name: Build and Push Docker Image
         id: docker
         run: |
-          TAG=${{ steps.timestamp.outputs.TAG }}
+          TAG=${{ steps.timestamp.outputs.tag }}
           IMAGE_NAME=${{ env.DOCKERHUB_USERNAME }}/llm_nlp_app:$TAG
-          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
 
+          echo "Building Docker Image: $IMAGE_NAME"
           docker build -t $IMAGE_NAME .
-          docker push $IMAGE_NAME
 
-      
+          echo "Pushing to DockerHub..."
+          docker push $IMAGE_NAME
