@@ -335,7 +335,7 @@ def execute_qa() -> None:
         os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
         logger.info("Commencing QA workflow..")
         cfg: Dict[str, Any] = load_config("./Config_Yaml/config_qa.yaml")
-        mlflow.set_tracking_uri("https://github.com/anp102618/llm_nlp_tasks_mlops.git")
+        mlflow.set_tracking_uri("https://dagshub.com/anp102618/llm_nlp_tasks_mlops.mlflow")
         experiment_name = cfg["mlflow"]["experiment_name"]
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         current_model = f"{cfg['mlflow']['experiment_name']}_{timestamp}"
