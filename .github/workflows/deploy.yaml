@@ -37,9 +37,9 @@ jobs:
         run: |
           pip install huggingface_hub
 
-      - name: Login to Hugging Face CLI
+      - name: Hugging Face login
         run: |
-          python -m huggingface_hub.cli.login --token $HF_TOKEN
+          echo "$HF_TOKEN" | huggingface-cli login --token
 
       - name: Model_tuning 
         run: python main.py
