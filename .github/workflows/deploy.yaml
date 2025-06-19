@@ -1,0 +1,57 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+  workflow_dispatch:
+
+env:
+
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
+jobs:
+
+  ######################################
+  # 1. Train, Track, Test , deploy the Model
+  ######################################
+  build-train-test-deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      promotion_status: ${{ steps.promotion.outputs.status }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Set Timestamp Tag
+        id: timestamp
+        run: echo "TAG=$(date +'%Y%m%d%H%M%S')" >> "$GITHUB_OUTPUT"
+
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        id: docker
+        run: |
+          TAG=${{ steps.timestamp.outputs.TAG }}
+          IMAGE_NAME=${{ env.DOCKERHUB_USERNAME }}/llm_nlp_app:$TAG
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
+
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+      

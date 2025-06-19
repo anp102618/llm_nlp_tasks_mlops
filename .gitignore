@@ -1,0 +1,62 @@
+# -----------------------------
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Conda files (optional)
+*.conda
+*.lock
+
+
+
+logs/
+__pycache__/
+
+mlartifacts/
+mlruns/
+
+
+# Streamlit cache
+.streamlit/
+
+# Hugging Face + Transformers cache (user-specific)
+~/.cache/huggingface/
+~/.huggingface/
+
+# Checkpoints / experiment runs
+checkpoints/
+outputs/
+runs/
+
+# VSCode & IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Environment and secrets
+.env
+.env.*
+token.json
+.secret*
+gcloud_key.json
+
+# Docker artifacts (optional)
+*.tar
+*.img
+*.container
+docker-compose.override.yml

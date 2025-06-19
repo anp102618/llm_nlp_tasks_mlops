@@ -1,0 +1,52 @@
+#config_text_classification.yaml
+dataset:
+  name: "glue"
+  config: "sst2"
+  train_subset_size: 1000
+  val_subset_size: 200
+  text_column: "sentence"
+  label_column: "label"
+
+model:
+  name: "distilbert-base-uncased"
+  load_in_4bit: false
+  torch_dtype: "float32"
+  device_map: "auto"
+  target_modules: ["q_lin", "v_lin"]  # Compatible target modules if LoRA is used
+
+tokenizer:
+  max_length: 128
+  truncation: true
+  padding: "max_length"
+  prefix: ""
+
+lora:
+  task_type: "SEQ_CLS"
+  r: 8
+  alpha: 16
+  dropout: 0.05
+  bias: "none"
+
+train:
+  epochs: 2
+  batch_size: 32
+  learning_rate: 3e-5
+  warmup_steps: 0
+
+evaluation:
+  metric: "accuracy"
+
+save:
+  output_dir: "Tuned_Models/saved_text_classification_model"
+
+mlflow:
+  experiment_name: "Light_Text_Classification"
+  run_name: "distilbert_run"
+
+inference:
+  example_text: "This movie was absolutely fantastic!"
+
+hub:
+  upload: true
+  repo_id: anp102618/tc-ultralight-lora
+  token: null

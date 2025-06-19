@@ -1,0 +1,54 @@
+dataset:
+  name: "wikitext"
+  config: "wikitext-2-raw-v1"
+  train_subset_size: 1000    # smaller subset for faster runs
+  val_subset_size: 200
+  text_column: "text"
+
+model:
+  name: "distilgpt2"         # smaller GPT2 variant (~82M params)
+  load_in_4bit: false
+  torch_dtype: "float32"     # safer on Windows, avoid fp16 issues
+  device_map: "auto"
+  target_modules: ["attn.c_proj", "attn.c_attn"]
+
+tokenizer:
+  max_length: 128            # shorter sequences, faster training
+  truncation: true
+  padding: "max_length"
+
+lora:
+  task_type: "CAUSAL_LM"
+  r: 8                       # smaller LoRA rank to reduce params
+  alpha: 16
+  dropout: 0.1
+  bias: "none"
+
+train:
+  epochs: 2                  # fewer epochs
+  batch_size: 4              # smaller batch size to fit GPU/CPU RAM
+  learning_rate: 1e-4        # slightly higher lr for faster convergence
+  warmup_steps: 100
+  gradient_accumulation_steps: 2  # to simulate batch size 8
+
+evaluation:
+  metric: "perplexity"
+  max_length: 50
+
+save:
+  output_dir: "Tuned_Models/saved_text_generation_model"
+
+mlflow:
+  experiment_name: "Text_Generation_Light"
+  run_name: "run_light"
+
+inference:
+  prompt: "Once upon a time"
+  max_length: 50
+  do_sample: true
+  num_return_sequences: 1
+
+hub:
+  upload: true
+  repo_id: anp102618/tg-ultralight-lora
+  token: null

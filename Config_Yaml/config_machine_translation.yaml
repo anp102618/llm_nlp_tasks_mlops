@@ -1,0 +1,56 @@
+dataset:
+  name: "opus_books"
+  config: "en-es"
+  train_subset_size: 2000
+  val_subset_size: 500
+  source_lang: "en"
+  target_lang: "es"
+  source_column: "translation"
+  target_column: "translation"
+
+model:
+  name: "t5-small"
+  load_in_4bit: false
+  torch_dtype: "float16"
+  device_map: "auto"
+  target_modules: ["q", "v"]  
+
+tokenizer:
+  max_input_length: 128
+  max_target_length: 128
+  truncation: true
+  padding: "max_length"
+  prefix: "translate English to Spanish: "  
+
+lora:
+  task_type: "SEQ_2_SEQ_LM"
+  r: 8
+  alpha: 16
+  dropout: 0.05
+  bias: "none"
+
+train:
+  epochs: 2
+  batch_size: 16
+  learning_rate: 3e-4
+  warmup_steps: 100
+
+evaluation:
+  metric: "bleu"
+  max_length: 128
+
+save:
+  output_dir: "Tuned_Models/saved_translation_model"
+
+mlflow:
+  experiment_name: "Machine_Translation"
+  run_name: "run_t5_small_en2es"
+
+inference:
+  example_text: "This is a test sentence"
+  max_length: 128
+
+hub:
+  upload: true
+  repo_id: anp102618/mt-ultralight-lora
+  token: null

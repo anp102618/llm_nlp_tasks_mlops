@@ -1,0 +1,11 @@
+models:
+  text_generation:
+    path: ./Tuned_Models/saved_text_generation_model
+  question_answering:
+    path: ./Tuned_Models/saved_qa_ultralight
+  machine_translation:
+    path: ./Tuned_Models/saved_translation_model
+  summarization:
+    path: ./Tuned_Models/summarization_ultralight
+  text_classification:
+    path: ./Tuned_Models/saved_text_classification_model

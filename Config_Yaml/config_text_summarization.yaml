@@ -1,0 +1,58 @@
+#config_summarization.yaml
+dataset:
+  name: "cnn_dailymail"
+  config: "3.0.0"
+  train_subset_size: 500
+  val_subset_size: 100
+  text_column: "article"
+  label_column: "highlights"
+
+model:
+  model:
+  name: "t5-small"
+  load_in_4bit: false
+  torch_dtype: "float32"
+  device_map: "auto"
+  target_modules: ["q", "v"]
+
+tokenizer:
+  max_input_length: 384
+  max_target_length: 64
+  truncation: true
+  padding: "max_length"
+  prefix: ""
+
+lora:
+  task_type: "SEQ_2_SEQ_LM"
+  r: 8
+  alpha: 16
+  dropout: 0.05
+  bias: "none"
+
+train:
+  epochs: 2
+  batch_size: 4
+  learning_rate: 3e-4
+  warmup_steps: 100
+
+evaluation:
+  metric: "rouge"
+  max_length: 64
+
+save:
+  output_dir: "Tuned_Models/summarization_ultralight"
+
+mlflow:
+  experiment_name: "Summarization"
+  run_name: "ultralight_run"
+
+inference:
+  example_text: "Danish construction firm Tscherning has divested its entire Tesla fleet, citing Elon Musk's political stances as the primary reason. This decision mirrors a broader trend in Europe, where Tesla's brand image and sales are suffering due to consumer concerns over Musk's political affiliations."
+  max_length: 64
+  min_length: 20
+  do_sample: false
+
+hub:
+  upload: true
+  repo_id: anp102618/ts-ultralight-lora
+  token: null
