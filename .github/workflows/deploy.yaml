@@ -33,14 +33,20 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Login to Hugging Face
-        run: huggingface-cli login --token $HF_TOKEN
+      - name: Install dependencies
+        run: |
+          pip install huggingface_hub
+
+      - name: Login to Hugging Face CLI
+        run: |
+          python -m huggingface_hub.cli.login --token $HF_TOKEN
 
       - name: Model_tuning 
         run: python main.py
-
-      - name: Upload Models to Hugging Face
-        run: python src/models_upload.py
+        
+      - name: Upload models to Hugging Face
+        run: |
+          python src/models_upload.py
 
       - name: Set Timestamp Tag
         id: timestamp
