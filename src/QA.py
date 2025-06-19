@@ -331,12 +331,20 @@ def execute_qa() -> None:
     - Trains, evaluates, and saves the model and artifacts
     """
     try:
+        os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("DAGSHUB_USERNAME")
+        os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
         logger.info("Commencing QA workflow..")
         cfg: Dict[str, Any] = load_config("./Config_Yaml/config_qa.yaml")
         mlflow.set_tracking_uri("https://github.com/anp102618/llm_nlp_tasks_mlops.git")
-        mlflow.set_experiment(cfg["mlflow"]["experiment_name"] + "_" + datetime.now().strftime("%Y%m%d_%H%M%S"))
+        experiment_name = cfg["mlflow"]["experiment_name"]
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        current_model = f"{cfg['mlflow']['experiment_name']}_{timestamp}"
+        run_name = f"{current_model}_{datetime.now().strftime('%Y%m%d_%H%M')}"
+        mlflow.set_experiment(experiment_name)
 
-        with mlflow.start_run(run_name=cfg["mlflow"]["run_name"]):
+        with mlflow.start_run(run_name=run_name) as run:
+            run_id = run.info.run_id
+            logger.info(f"Started MLflow run: {run_id}")
             for section, values in cfg.items():
                 if isinstance(values, dict):
                     for key, val in values.items():

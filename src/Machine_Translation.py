@@ -23,9 +23,6 @@ from Common_Utils import setup_logger, track_performance, load_config, CustomExc
 from src.base_model import NLPBaseModel
 import dagshub
 
-os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("DAGSHUB_USERNAME")
-os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
-
 
 logger = setup_logger(filename="NLP_logger_test")
 
@@ -340,16 +337,22 @@ def execute_machine_translation() -> None:
         None
     """
     try:
+        os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("DAGSHUB_USERNAME")
+        os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
         logger.info("Commencing Machine Translation workflow..")
+        
         cfg: Dict[str, Any] = load_config("./Config_Yaml/config_machine_translation.yaml")
-
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         current_model = f"{cfg['mlflow']['experiment_name']}_{timestamp}"
 
         mlflow.set_tracking_uri("https://github.com/anp102618/llm_nlp_tasks_mlops.git")
-        mlflow.set_experiment(current_model)
+        experiment_name = cfg["mlflow"]["experiment_name"]
+        run_name = f"{current_model}_{datetime.now().strftime('%Y%m%d_%H%M')}"
+        mlflow.set_experiment(experiment_name)
 
-        with mlflow.start_run(run_name=cfg["mlflow"]["run_name"]):
+        with mlflow.start_run(run_name=run_name) as run:
+            run_id = run.info.run_id
+            logger.info(f"Started MLflow run: {run_id}")
             for section, values in cfg.items():
                 if isinstance(values, dict):
                     for key, val in values.items():
