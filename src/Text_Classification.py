@@ -248,14 +248,7 @@ def execute_text_classification() -> None:
     - Trains, evaluates, and saves artifacts
     """
     try:
-        dagshub_username = os.getenv("DAGSHUB_USERNAME")
-        dagshub_token = os.getenv("DAGSHUB_TOKEN")
-
-        if dagshub_username and dagshub_token:
-            os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_username
-            os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
-        else:
-            raise ValueError("DAGSHUB_USERNAME and/or DAGSHUB_TOKEN environment variables are not set.")
+        
         logger.info("Commencing Text classification workflow...")
         cfg = load_config("./Config_Yaml/config_text_classification.yaml")
 
