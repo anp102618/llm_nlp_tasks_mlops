@@ -18,11 +18,11 @@ logger = setup_logger(filename="NLP_logger_test")
 def pipeline():
     try: 
         logger.info(f"Starting training of NLP tasks..")
-        #execute_machine_translation()
-       # execute_qa()
+        execute_machine_translation()
+        execute_qa()
         execute_text_classification()
-       # execute_text_generation()
-        #execute_text_summarization()
+        execute_text_generation()
+        execute_text_summarization()
         execute_implementation()
         logger.info(f"training of NLP tasks completed succesfully..")
 
