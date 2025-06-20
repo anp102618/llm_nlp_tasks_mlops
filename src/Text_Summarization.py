@@ -254,20 +254,27 @@ class Text_Summarization(NLPBaseModel):
             logger.info("Saving model and tokenizer locally...")
             accelerator.wait_for_everyone()
             unwrapped_model = accelerator.unwrap_model(model)
-            unwrapped_model.save_pretrained(cfg["save"]["output_dir"], save_function=accelerator.save)
-            tokenizer.save_pretrained(cfg["save"]["output_dir"])
-            logger.info("Logging model to MLflow...")
-            mlflow.pytorch.log_model(unwrapped_model, "model")
 
-            for root, _, files in os.walk(cfg["save"]["output_dir"]):
+            output_dir = cfg["save"]["output_dir"]
+            unwrapped_model.save_pretrained(output_dir, save_function=accelerator.save)
+            tokenizer.save_pretrained(output_dir)
+
+            logger.info("Logging model artifacts to MLflow...")
+
+            # Log model/tokenizer files
+            for root, _, files in os.walk(output_dir):
                 for file in files:
-                    mlflow.log_artifact(os.path.join(root, file))
+                    file_path = os.path.join(root, file)
+                    mlflow.log_artifact(file_path, artifact_path="model")
 
+            # Log config if it exists
             config_path = cfg.get("config_path", "config.yaml")
             if os.path.exists(config_path):
-                mlflow.log_artifact(config_path)
+                mlflow.log_artifact(config_path, artifact_path="config")
+
+            logger.info("Model, tokenizer, and config successfully logged to MLflow.")
         except CustomException as e:
-            logger.error("Saving model/tokenizer failed", e)
+            logger.exception("Saving model/tokenizer failed.")
             raise
 
 

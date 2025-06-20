@@ -10,7 +10,6 @@ from src.Text_Classification import execute_text_classification
 from src.Text_Generation import execute_text_generation
 from src.Text_Summarization import execute_text_summarization
 from src.implementation import execute_implementation
-from src.models_upload import execute_model_upload
 from Common_Utils import setup_logger, track_performance , CustomException, load_config
 
 logger = setup_logger(filename="NLP_logger_test")
@@ -20,13 +19,11 @@ def pipeline():
     try: 
         logger.info(f"Starting training of NLP tasks..")
         #execute_machine_translation()
-        #execute_qa()
+       # execute_qa()
         execute_text_classification()
-        #execute_text_generation()
+       # execute_text_generation()
         #execute_text_summarization()
-        #execute_implementation()
-        #execute_model_upload()
-
+        execute_implementation()
         logger.info(f"training of NLP tasks completed succesfully..")
 
     except CustomException as e:
